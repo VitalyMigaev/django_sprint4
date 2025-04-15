@@ -4,15 +4,14 @@ from django.contrib import admin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
 from django.views.generic.edit import CreateView
-from django.urls import include, path, reverse_lazy, path, include
+from django.urls import include, path, reverse_lazy
 
 
-handler403 = 'pages.views.error403'
+handler403 = 'pages.views.error403csrf'
 handler404 = 'pages.views.error404'
 handler500 = 'pages.views.error500'
 
 urlpatterns = [
-    path('', include('blog.urls', namespace='blog')),
     path('pages/', include('pages.urls', namespace='pages')),
     path('admin/', admin.site.urls),
 
@@ -35,5 +34,10 @@ urlpatterns = [
 
     path('auth/', include('django.contrib.auth.urls')),
 
+    path('', include('blog.urls', namespace='blog')),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

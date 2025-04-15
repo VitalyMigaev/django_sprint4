@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from .constants import MAX_TITLE_LENGTH
+
 User = get_user_model()
 
 
@@ -9,7 +11,8 @@ class TimestampModel(models.Model):
     is_published = models.BooleanField(
         'Опубликовано',
         default=True,
-        help_text='Снимите галочку, чтобы скрыть публикацию.')
+        help_text='Снимите галочку, чтобы скрыть публикацию.'
+    )
     created_at = models.DateTimeField('Добавлено', auto_now_add=True)
 
     class Meta:
@@ -22,8 +25,11 @@ class Category(TimestampModel):
     slug = models.SlugField(
         'Идентификатор',
         max_length=64, unique=True,
-        help_text='Идентификатор страницы для URL; разрешены символы '
-                  'латиницы, цифры, дефис и подчёркивание.')
+        help_text=(
+            'Идентификатор страницы для URL; '
+            'разрешены символы латиницы, цифры, дефис и подчёркивание.'
+        )
+    )
 
     class Meta:
         verbose_name = 'категория'
@@ -31,7 +37,7 @@ class Category(TimestampModel):
         ordering = ('title',)
 
     def __str__(self):
-        return self.title[:50]
+        return self.title[:MAX_TITLE_LENGTH]
 
 
 class Location(TimestampModel):
@@ -43,7 +49,7 @@ class Location(TimestampModel):
         ordering = ('name',)
 
     def __str__(self):
-        return self.name[:50]
+        return self.name[:MAX_TITLE_LENGTH]
 
 
 class Post(TimestampModel):
@@ -53,8 +59,11 @@ class Post(TimestampModel):
         'Изображение', upload_to='posts_images', blank=True, null=True)
     pub_date = models.DateTimeField(
         'Дата и время публикации',
-        help_text='Если установить дату и время в будущем — можно делать '
-                  'отложенные публикации.')
+        help_text=(
+            'Если установить дату и время в будущем — можно делать '
+            'отложенные публикации.'
+        )
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -81,7 +90,7 @@ class Post(TimestampModel):
         default_related_name = 'posts'
 
     def __str__(self):
-        return self.title[:50]
+        return self.title[:MAX_TITLE_LENGTH]
 
 
 class Comment(TimestampModel):
@@ -96,11 +105,17 @@ class Comment(TimestampModel):
         on_delete=models.CASCADE,
         verbose_name='Комментируемый пост'
     )
+    is_published = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
         default_related_name = 'comments'
+        ordering = ['created_at']
 
     def __str__(self):
-        return f'Комментарий {self.author.username} поста {self.post.title}'
+        return (
+            f'Комментарий от {self.author.username} '
+            f'к посту "{self.post}" '
+            f'текст: "{self.text[:MAX_TITLE_LENGTH]}..."'
+        )

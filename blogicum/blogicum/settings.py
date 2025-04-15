@@ -14,14 +14,14 @@ ALLOWED_HOSTS = [
 
 
 INSTALLED_APPS = [
-    'blog.apps.BlogConfig',
-    'pages.apps.PagesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'blog.apps.BlogConfig',
+    'pages.apps.PagesConfig',
     'django_bootstrap5',
 ]
 
@@ -102,7 +102,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static_dev',
 ]
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'blog'
 LOGIN_URL = 'login'
 
 CSRF_FAILURE_VIEW = 'pages.views.error403csrf'

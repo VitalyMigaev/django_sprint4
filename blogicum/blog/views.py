@@ -1,32 +1,26 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.utils import timezone
+from django.urls import reverse
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+)
+from django.contrib.auth.models import User
 from django.db.models import Count
 from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
-from django.urls import reverse
 from django.views.generic import CreateView, ListView, DetailView
 
-from .forms import (
+from blog.forms import (
     CommentCreateForm,
     PostForm,
     UserEditForm,
 )
-from .models import Category, Post, Comment
-
-POSTS_ON_PAGE = 10
-
-
-def get_paginator_page(request, query_set, posts_on_page=POSTS_ON_PAGE):
-    return Paginator(query_set, posts_on_page
-                     ).get_page(request.GET.get('page'))
-
-
-class OnlyAuthorMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.get_object().author == self.request.user
+from blog.models import Category, Post, Comment
+from blog.constants import POSTS_ON_PAGE
+from blog.service import get_paginator_page
+from blog.mixins import OnlyAuthorMixin
 
 
 def get_published_posts(
@@ -142,14 +136,14 @@ class PostDetailView(DetailView):
             return post
         return super().get_object(
             get_published_posts(
-                use_select_related=False,
+                use_select_related=True,
                 use_annotation=False
             ))
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
             **kwargs,
-            comments=self.get_object().comments.all(),
+            comments=self.get_object().comments.select_related('author'),
             form=CommentCreateForm())
 
 
@@ -206,7 +200,8 @@ class UserDetailView(DetailView):
                 get_published_posts(
                     posts=self.get_object().posts.all(),
                     use_filtering=(self.request.user != self.get_object())
-                )
+                ),
+                posts_on_page=POSTS_ON_PAGE
             )
         )
 
