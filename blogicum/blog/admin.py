@@ -39,9 +39,15 @@ class CommentAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     empty_value_display = 'Не задано'
 
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.filter(is_published=True)
+        if request.GET.get('action') == 'publish':
+            return qs.filter(is_published=False)
+        elif request.GET.get('action') == 'clean':
+            return qs.filter(is_published=True)
+        else:
+            return qs.filter(is_published=True)
 
 
 @admin.register(Category)

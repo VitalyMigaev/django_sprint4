@@ -105,7 +105,7 @@ class Comment(TimestampModel):
         on_delete=models.CASCADE,
         verbose_name='Комментируемый пост'
     )
-    is_published = models.BooleanField(default=True)
+
 
     class Meta:
         verbose_name = 'комментарий'

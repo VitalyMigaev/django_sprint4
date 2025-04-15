@@ -1,47 +1,23 @@
-from django.utils import timezone
-from django.urls import reverse
-
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-)
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, ListView, DetailView
-
-from blog.forms import (
-    CommentCreateForm,
-    PostForm,
-    UserEditForm,
+from django.shortcuts import (
+    get_object_or_404, redirect, render
 )
-from blog.models import Category, Post, Comment
+from django.urls import reverse
+from django.utils import timezone
+from django.views.generic import (
+    CreateView, DetailView, ListView
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from blog.constants import POSTS_ON_PAGE
-from blog.service import get_paginator_page
-
-
-def get_published_posts(
-    posts: QuerySet = Post.objects.all(),
-    use_filtering: bool = True,
-    use_select_related: bool = True,
-    use_annotation: bool = True,
-):
-    if use_filtering:
-        posts = posts.filter(
-            pub_date__lt=timezone.now(),
-            is_published=True,
-            category__is_published=True
-        )
-    if use_select_related:
-        posts = posts.select_related('category', 'location', 'author')
-    if use_annotation:
-        posts = posts.annotate(
-            comment_count=Count('comments')
-        ).order_by(
-            *Post._meta.ordering
-        )
-    return posts
+from blog.forms import (
+    CommentCreateForm, PostForm, UserEditForm
+)
+from blog.models import Category, Comment, Post
+from blog.service import get_paginator_page, get_published_posts
 
 
 class PostListView(ListView):
@@ -134,7 +110,6 @@ class PostDetailView(DetailView):
             return post
         return super().get_object(
             get_published_posts(
-                use_select_related=True,
                 use_annotation=False
             ))
 
