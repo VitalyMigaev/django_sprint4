@@ -39,7 +39,6 @@ class CommentAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     empty_value_display = 'Не задано'
 
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.GET.get('action') == 'publish':

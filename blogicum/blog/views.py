@@ -1,12 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Count
-from django.db.models.query import QuerySet
 from django.shortcuts import (
     get_object_or_404, redirect, render
 )
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import (
     CreateView, DetailView, ListView
 )

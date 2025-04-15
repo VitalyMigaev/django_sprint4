@@ -106,7 +106,6 @@ class Comment(TimestampModel):
         verbose_name='Комментируемый пост'
     )
 
-
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
