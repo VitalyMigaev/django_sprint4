@@ -1,4 +1,3 @@
-from django.core.paginator import Paginator
 from django.utils import timezone
 from django.urls import reverse
 
@@ -20,7 +19,6 @@ from blog.forms import (
 from blog.models import Category, Post, Comment
 from blog.constants import POSTS_ON_PAGE
 from blog.service import get_paginator_page
-from blog.mixins import OnlyAuthorMixin
 
 
 def get_published_posts(

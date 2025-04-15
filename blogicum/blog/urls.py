@@ -30,7 +30,7 @@ posts_urls = [
 ]
 
 urlpatterns = [
-    path('', 
+    path('',
          views.PostListView.as_view(),
          name='index'),
     path('posts/',
